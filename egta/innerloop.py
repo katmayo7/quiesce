@@ -97,6 +97,9 @@ async def inner_loop(  # pylint: disable=too-many-locals
     equilibria = collect.mcces(dist_thresh)
     loop = asyncio.get_event_loop()
 
+    all_profiles = [] #list of all profiles seen
+    eq_num_profiles = {} #{equilibrium: (regret, # profiles)}
+
     async def add_restriction(rest):
         """Adds a restriction to be evaluated"""
         if not exp_restrictions.add(rest):
@@ -105,6 +108,11 @@ async def inner_loop(  # pylint: disable=too-many-locals
             # Short circuit for pure restriction
             return await add_deviations(rest, rest.astype(float), init_role_dev)
         data = await agame.get_restricted_game(rest)
+
+        #count number of profiles (egta schedgame.py)
+        profs = await agame._rprofs(rest)
+        all_profiles.append(profs)
+
         reqa = await loop.run_in_executor(
             executor,
             functools.partial(
@@ -140,6 +148,11 @@ async def inner_loop(  # pylint: disable=too-many-locals
         # regret of strategies in the initial restriction
         data = await agame.get_deviation_game(mix > 0, role_index)
         devs = data.deviation_payoffs(mix)
+
+        #count number of profiles
+        profs = await data._rprofs(rest)
+        all_profiles.append(profs)
+
         exp = np.add.reduceat(devs * mix, agame.role_starts)
         gains = devs - exp.repeat(agame.num_role_strats)
         if role_index is None:
@@ -153,6 +166,12 @@ async def inner_loop(  # pylint: disable=too-many-locals
                         agame,
                         reg,
                     )
+                    #log # profiles with regret
+                        if agame.mixture_to_repr(mix) not in eq_num_profiles:
+                            all_profiles = list(set(all_profiles))
+                            temp_num_profiles = len(all_profiles)
+                            eq_num_profiles[agame.mixture_to_repr(mix)] = (reg, temp_num_profiles)
+                        logging.warning('number of profiles: %d', temp_num_profiles)
             else:
                 await asyncio.gather(
                     *[
@@ -182,6 +201,12 @@ async def inner_loop(  # pylint: disable=too-many-locals
                             agame,
                             reg,
                         )
+                        #log # profiles with regret
+                        if agame.mixture_to_repr(mix) not in eq_num_profiles:
+                            all_profiles = list(set(all_profiles))
+                            temp_num_profiles = len(all_profiles)
+                            eq_num_profiles[agame.mixture_to_repr(mix)] = (reg, temp_num_profiles)
+                        logging.warning('number of profiles: %d', temp_num_profiles)
             else:
                 await queue_restrictions(rgains, role_index, rest)
 
@@ -265,6 +290,6 @@ async def inner_loop(  # pylint: disable=too-many-locals
 
     # Return equilibria
     if equilibria:  # pylint: disable=no-else-return
-        return np.stack([eqm for eqm, _ in equilibria])
+        return np.stack([eqm for eqm, _ in equilibria]),eq_num_profiles
     else:
-        return np.empty((0, agame.num_strats))  # pragma: no cover
+        return np.empty((0, agame.num_strats)),eq_num_profiles  # pragma: no cover

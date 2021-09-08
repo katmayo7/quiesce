@@ -121,7 +121,7 @@ async def run(args):
 
     async with sched:
         with futures.ProcessPoolExecutor(args.procs) as executor:
-            eqa = await innerloop.inner_loop(
+            eqa,eq_ = await innerloop.inner_loop(
                 agame,
                 regret_thresh=args.regret_thresh,
                 dist_thresh=args.dist_thresh,
