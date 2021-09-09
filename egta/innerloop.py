@@ -111,6 +111,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
 
         #count number of profiles (egta schedgame.py)
         profs = await agame._rprofs(rest)
+        #prof = await agame.profiles()
         all_profiles.append(profs)
 
         reqa = await loop.run_in_executor(
@@ -150,7 +151,8 @@ async def inner_loop(  # pylint: disable=too-many-locals
         devs = data.deviation_payoffs(mix)
 
         #count number of profiles
-        profs = await data._rprofs(rest)
+        #profs = await data._rprofs(rest)
+        profs = await data.profiles()
         all_profiles.append(profs)
 
         exp = np.add.reduceat(devs * mix, agame.role_starts)
