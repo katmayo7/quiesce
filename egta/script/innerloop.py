@@ -121,7 +121,7 @@ async def run(args):
 
     async with sched:
         with futures.ProcessPoolExecutor(args.procs) as executor:
-            eqa,eq_ = await innerloop.inner_loop(
+            eqa,eq = await innerloop.inner_loop(
                 agame,
                 regret_thresh=args.regret_thresh,
                 dist_thresh=args.dist_thresh,
@@ -143,6 +143,10 @@ async def run(args):
         ),
     )
 
+    #log equilibrium with number of profiles to logging error {equilibrium: (regret, # profiles)}
+    for e in eq:
+        logging.error('equilibria: {0} regret: {1} number of profiles: {2}\n'.format(e, eq[e][0], eq[e][1]))
+
     json.dump(
         [
             {"equilibrium": sched.mixture_to_json(eqm), "regret": reg}
@@ -150,4 +154,9 @@ async def run(args):
         ],
         args.output,
     )
+
+    #log equilibrium with number of profiles to json file
+    with open(args.output, 'a') as f:
+        json.dump(eq, f)
+
     args.output.write("\n")
