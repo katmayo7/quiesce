@@ -152,7 +152,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
 
         #count number of profiles
         #profs = await data._rprofs(rest)
-        profs = await data.profiles()
+        profs = data.profiles()
         all_profiles.append(profs)
 
         exp = np.add.reduceat(devs * mix, agame.role_starts)
