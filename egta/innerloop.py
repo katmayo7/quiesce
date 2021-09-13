@@ -115,6 +115,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         profs = await agame._rprofs(rest)
         #prof = await agame.profiles()
         print("line 115", all_profiles, file=sys.stderr)
+        print(profs, file=sys.stderr)
         all_profiles.add(profs)
 
         reqa = await loop.run_in_executor(
