@@ -174,7 +174,6 @@ async def inner_loop(  # pylint: disable=too-many-locals
                     )
                     #log # profiles with regret
                     if agame.mixture_to_repr(mix) not in eq_num_profiles:
-                        all_profiles = list(set(all_profiles))
                         temp_num_profiles = len(all_profiles)
                         eq_num_profiles[agame.mixture_to_repr(mix)] = (reg, temp_num_profiles)
                         logging.warning('number of profiles: %d', temp_num_profiles)
@@ -209,7 +208,6 @@ async def inner_loop(  # pylint: disable=too-many-locals
                         )
                         #log # profiles with regret
                         if agame.mixture_to_repr(mix) not in eq_num_profiles:
-                            all_profiles = list(set(all_profiles))
                             temp_num_profiles = len(all_profiles)
                             eq_num_profiles[agame.mixture_to_repr(mix)] = (reg, temp_num_profiles)
                             logging.warning('number of profiles: %d', temp_num_profiles)
