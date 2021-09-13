@@ -99,7 +99,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
     equilibria = collect.mcces(dist_thresh)
     loop = asyncio.get_event_loop()
 
-    all_profiles = [] #list of all profiles seen
+    all_profiles = set() #all unique profiles seen
     eq_num_profiles = {} #{equilibrium: (regret, # profiles)}
 
     async def add_restriction(rest):
@@ -115,7 +115,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         profs = await agame._rprofs(rest)
         #prof = await agame.profiles()
         print("line 115", all_profiles, file=sys.stderr)
-        all_profiles.append(profs)
+        all_profiles.add(profs)
 
         reqa = await loop.run_in_executor(
             executor,
@@ -157,7 +157,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #profs = await data._rprofs(rest)
         profs = data.profiles()
         print("line 157", all_profiles, file=sys.stderr)
-        all_profiles.append(profs)
+        all_profiles.add(profs)
 
         exp = np.add.reduceat(devs * mix, agame.role_starts)
         gains = devs - exp.repeat(agame.num_role_strats)
