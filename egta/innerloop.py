@@ -112,7 +112,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         data = await agame.get_restricted_game(rest)
 
         #count number of profiles (egta schedgame.py)
-        profs = await agame._rprofs(rest)
+        profs = agame._rprofs(rest)
         #prof = await agame.profiles()
         print(profs, file=sys.stderr)
         print("line 115", all_profiles, file=sys.stderr)
