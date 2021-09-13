@@ -114,9 +114,11 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #count number of profiles (egta schedgame.py)
         profs = agame._rprofs(rest)
         #prof = await agame.profiles()
-        print(profs, file=sys.stderr)
-        print("line 115", all_profiles, file=sys.stderr)
-        all_profiles.add(profs)
+        #print(profs, file=sys.stderr)
+        #print("line 115", all_profiles, file=sys.stderr)
+        for p in profs:
+            temp_p = tuple(p)
+            all_profiles.add(temp_p)
 
         reqa = await loop.run_in_executor(
             executor,
@@ -241,13 +243,15 @@ async def inner_loop(  # pylint: disable=too-many-locals
             sub[role_start + strat_ind] = True
             heapq.heappush(back, (-gain, id(sub), sub))  # id for tie-breaking
 
-    print("line 242", all_profiles, file=sys.stderr)
+    #print("line 242", all_profiles, file=sys.stderr)
 
     restrictions = (
         agame.pure_restrictions()
         if initial_restrictions is None
         else np.asarray(initial_restrictions, bool)
     )
+
+    print('initial restrictions: {0}'.format(restrictions))
 
     iteration = 0
     while len(equilibria) < num_equilibria and (
@@ -296,6 +300,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
                     break
         iteration += 1
 
+    print(all_profiles)
     # Return equilibria
     if equilibria:  # pylint: disable=no-else-return
         return np.stack([eqm for eqm, _ in equilibria]),eq_num_profiles
