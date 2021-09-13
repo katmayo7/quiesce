@@ -156,6 +156,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #count number of profiles
         #profs = await data._rprofs(rest)
         profs = data.profiles()
+        print(profs, file=sys.stderr)
         print("line 157", all_profiles, file=sys.stderr)
         all_profiles.add(profs)
 
