@@ -10,6 +10,8 @@ from gameanalysis import nash
 from gameanalysis import regret
 from gameanalysis import restrict
 
+import sys
+
 
 # TODO There's something to be said about individual rationality constraints
 # relative to best deviation, i.e. if all are positive gains, but negative
@@ -112,6 +114,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #count number of profiles (egta schedgame.py)
         profs = await agame._rprofs(rest)
         #prof = await agame.profiles()
+        print("line 115", all_profiles, file=sys.stderr)
         all_profiles.append(profs)
 
         reqa = await loop.run_in_executor(
@@ -153,6 +156,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #count number of profiles
         #profs = await data._rprofs(rest)
         profs = data.profiles()
+        print("line 157", all_profiles, file=sys.stderr)
         all_profiles.append(profs)
 
         exp = np.add.reduceat(devs * mix, agame.role_starts)
@@ -236,6 +240,8 @@ async def inner_loop(  # pylint: disable=too-many-locals
             sub = rest.copy()
             sub[role_start + strat_ind] = True
             heapq.heappush(back, (-gain, id(sub), sub))  # id for tie-breaking
+
+    print("line 242", all_profiles, file=sys.stderr)
 
     restrictions = (
         agame.pure_restrictions()
