@@ -134,6 +134,9 @@ async def run(args):
             )
         regrets = await asyncio.gather(*[get_regret(eqm) for eqm in eqa])
 
+    print(eqa)
+    print(eq)
+
     logging.error(
         "quiesce finished finding %d equilibria:\n%s",
         eqa.shape[0],

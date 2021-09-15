@@ -99,8 +99,57 @@ async def inner_loop(  # pylint: disable=too-many-locals
     equilibria = collect.mcces(dist_thresh)
     loop = asyncio.get_event_loop()
 
-    all_profiles = set() #all unique profiles seen
+    #all_profiles = set() #all unique profiles seen
+    all_max_games = set() #all maximal games seen
+    all_deviations = set() #all deviation profiles checked not part of a maximal game
     eq_num_profiles = {} #{equilibrium: (regret, # profiles)}
+
+    #adds new restricted game to set if it is not already in it or represented by a maximal game already in the set
+    #if new game is maximal of games already in the set, it remove those games
+    def add_subgame(rest):
+        add_to_list = False
+        min_games = []
+
+        for m in all_max_games:
+            temp = m[0]
+            diff = (rest & temp)
+            if np.sum(rest) == np.sum(diff) and np.sum(temp) >= np.sum(rest):
+                break
+            else:
+                if np.sum(diff) != 0:
+                    min_games.append(m)
+                add_to_list = True
+
+        if add_to_list == True:
+            for m in min_games:
+                all_max_games.remove(m)
+            to_add = tuple(rest)
+            n = len(agame._rprofs(rest))
+            all_max_games.add(tuple([to_add, n]))
+            #check if adding this game removes anything from deviations list
+            remove_deviations(all_deviations, rest)
+
+    #removes profiles in the deviation set that are represented by the restricted game being added to the game set
+    def remove_deviations(deviations, rest):
+        for dev in deviations:
+            temp = [d != 0 for d in dev]
+            diff = (game & temp)
+            if np.sum(temp) != np.sum(diff):
+                all_deviations.add(tuple(dev))
+
+    #adds deviations to the deviation set if they are not already covered by a restricted game in the game set
+    def add_deviations(deviations):
+        for dev in deviations:
+            covered = False
+            temp_dev = [d != 0 for d in dev]
+
+            for m in all_max_games:
+                diff = (np.array(m[0]) & temp_dev)
+                if np.sum(temp_dev) == np.sum(diff):
+                    covered = True 
+
+            if covered == False:
+                all_deviations.add(tuple(dev))
 
     async def add_restriction(rest):
         """Adds a restriction to be evaluated"""
@@ -112,13 +161,14 @@ async def inner_loop(  # pylint: disable=too-many-locals
         data = await agame.get_restricted_game(rest)
 
         #count number of profiles (egta schedgame.py)
-        profs = agame._rprofs(rest)
-        #prof = await agame.profiles()
+        #profs = agame._rprofs(rest)
         #print(profs, file=sys.stderr)
         #print("line 115", all_profiles, file=sys.stderr)
-        for p in profs:
-            temp_p = tuple(p)
-            all_profiles.add(temp_p)
+        #for p in profs:
+            #temp_p = tuple(p)
+            #all_profiles.add(temp_p)
+        #count games
+        add_subgame(rest)
 
         reqa = await loop.run_in_executor(
             executor,
@@ -157,11 +207,12 @@ async def inner_loop(  # pylint: disable=too-many-locals
         devs = data.deviation_payoffs(mix)
 
         #count number of profiles
-        #profs = await data._rprofs(rest)
         profs = data.profiles()
-        for p in profs:
-            temp_p = tuple(p)
-            all_profiles.add(temp_p)
+        #for p in profs:
+            #temp_p = tuple(p)
+            #all_profiles.add(temp_p)
+        #count games
+        add_deviations(profs)
 
         exp = np.add.reduceat(devs * mix, agame.role_starts)
         gains = devs - exp.repeat(agame.num_role_strats)
@@ -251,7 +302,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         else np.asarray(initial_restrictions, bool)
     )
 
-    print('initial restrictions: {0}'.format(restrictions))
+    #print('initial restrictions: {0}'.format(restrictions))
 
     iteration = 0
     while len(equilibria) < num_equilibria and (
@@ -300,7 +351,6 @@ async def inner_loop(  # pylint: disable=too-many-locals
                     break
         iteration += 1
 
-    print(all_profiles)
     # Return equilibria
     if equilibria:  # pylint: disable=no-else-return
         return np.stack([eqm for eqm, _ in equilibria]),eq_num_profiles
