@@ -151,6 +151,15 @@ async def inner_loop(  # pylint: disable=too-many-locals
             if covered == False:
                 all_deviations.add(tuple(dev))
 
+    def count_profiles():
+        num_profiles = 0
+        for m in max_games:
+            num_profiles += m[1]
+
+        num_profiles += len(all_deviations)
+
+        return num_profiles
+
     async def add_restriction(rest):
         """Adds a restriction to be evaluated"""
         if not exp_restrictions.add(rest):
@@ -229,7 +238,9 @@ async def inner_loop(  # pylint: disable=too-many-locals
                     )
                     #log # profiles with regret
                     if agame.mixture_to_repr(mix) not in eq_num_profiles:
-                        temp_num_profiles = len(all_profiles)
+                        #get number fo profiles
+                        #temp_num_profiles = len(all_profiles)
+                        temp_num_profiles = count_profiles()
                         eq_num_profiles[agame.mixture_to_repr(mix)] = (reg, temp_num_profiles)
                         logging.warning('number of profiles: %d', temp_num_profiles)
             else:
@@ -263,7 +274,8 @@ async def inner_loop(  # pylint: disable=too-many-locals
                         )
                         #log # profiles with regret
                         if agame.mixture_to_repr(mix) not in eq_num_profiles:
-                            temp_num_profiles = len(all_profiles)
+                            #temp_num_profiles = len(all_profiles)
+                            temp_num_profiles = count_profiles()
                             eq_num_profiles[agame.mixture_to_repr(mix)] = (reg, temp_num_profiles)
                             logging.warning('number of profiles: %d', temp_num_profiles)
             else:
