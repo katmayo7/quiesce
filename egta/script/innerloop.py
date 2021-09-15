@@ -134,9 +134,6 @@ async def run(args):
             )
         regrets = await asyncio.gather(*[get_regret(eqm) for eqm in eqa])
 
-    print(eqa)
-    print(eq)
-
     logging.error(
         "quiesce finished finding %d equilibria:\n%s",
         eqa.shape[0],
@@ -150,6 +147,7 @@ async def run(args):
     for e in eq:
         logging.error('equilibria: {0} regret: {1} number of profiles: {2}\n'.format(e, eq[e][0], eq[e][1]))
 
+    """
     json.dump(
         [
             {"equilibrium": sched.mixture_to_json(eqm), "regret": reg}
@@ -157,9 +155,15 @@ async def run(args):
         ],
         args.output,
     )
+    """
 
     #log equilibrium with number of profiles to json file
-    with open(args.output, 'a') as f:
-        json.dump(eq, f)
+    json.dump(
+        [
+            {"equilibrium": sched.mixture_to_json(e), "regret": eq[e][0], "num profiles": eq[e][1]}
+            for e in eq
+        ],
+        args.output,
+        )
 
     args.output.write("\n")
