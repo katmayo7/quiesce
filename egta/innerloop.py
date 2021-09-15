@@ -153,7 +153,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
 
     def count_profiles():
         num_profiles = 0
-        for m in max_games:
+        for m in all_max_games:
             num_profiles += m[1]
 
         num_profiles += len(all_deviations)
