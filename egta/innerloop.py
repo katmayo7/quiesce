@@ -127,10 +127,10 @@ async def inner_loop(  # pylint: disable=too-many-locals
             n = len(agame._rprofs(rest))
             all_max_games.add(tuple([to_add, n]))
             #check if adding this game removes anything from deviations list
-            remove_deviations(all_deviations, rest)
+            check_remove_deviations(all_deviations, rest)
 
     #removes profiles in the deviation set that are represented by the restricted game being added to the game set
-    def remove_deviations(deviations, rest):
+    def check_remove_deviations(deviations, rest):
         for dev in deviations:
             temp = [d != 0 for d in dev]
             diff = (game & temp)
@@ -138,7 +138,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
                 all_deviations.add(tuple(dev))
 
     #adds deviations to the deviation set if they are not already covered by a restricted game in the game set
-    def add_deviations(deviations):
+    def check_add_deviations(deviations):
         for dev in deviations:
             covered = False
             temp_dev = [d != 0 for d in dev]
@@ -212,7 +212,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
             #temp_p = tuple(p)
             #all_profiles.add(temp_p)
         #count games
-        add_deviations(profs)
+        check_add_deviations(profs)
 
         exp = np.add.reduceat(devs * mix, agame.role_starts)
         gains = devs - exp.repeat(agame.num_role_strats)
