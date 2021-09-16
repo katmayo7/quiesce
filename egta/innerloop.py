@@ -177,7 +177,11 @@ async def inner_loop(  # pylint: disable=too-many-locals
             #temp_p = tuple(p)
             #all_profiles.add(temp_p)
         #count games
+        print('Max subgames: {0}'.format(all_max_games))
+        print('All deviations: {0}'.format(all_deviations))
         add_subgame(rest)
+        print('New max subgames: {0}'.format(all_max_games))
+        print('New all deviations: {0}'.format(all_deviations))
 
         reqa = await loop.run_in_executor(
             executor,
@@ -221,7 +225,9 @@ async def inner_loop(  # pylint: disable=too-many-locals
             #temp_p = tuple(p)
             #all_profiles.add(temp_p)
         #count games
+        print('All deviations: {0}'.format(all_deviations))
         check_add_deviations(profs)
+        print('New all deviations: {0}'.format(all_deviations))
 
         exp = np.add.reduceat(devs * mix, agame.role_starts)
         gains = devs - exp.repeat(agame.num_role_strats)
