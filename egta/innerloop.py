@@ -120,6 +120,8 @@ async def inner_loop(  # pylint: disable=too-many-locals
                     min_games.append(m)
                 add_to_list = True
 
+        print('Restricted game: {0}; added to set: {1}'.format(rest, add_to_list))
+
         if add_to_list == True:
             for m in min_games:
                 all_max_games.remove(m)
