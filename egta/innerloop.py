@@ -120,6 +120,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
                     min_games.append(m)
                 add_to_list = True
 
+        print('Game set before new restricted game: {0}'.format(all_max_games))
         print('Restricted game: {0}; added to set: {1}'.format(rest, add_to_list))
 
         if add_to_list == True:
@@ -322,7 +323,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         else np.asarray(initial_restrictions, bool)
     )
 
-    #print('initial restrictions: {0}'.format(restrictions))
+    print('initial restrictions: {0}'.format(restrictions))
 
     iteration = 0
     while len(equilibria) < num_equilibria and (
