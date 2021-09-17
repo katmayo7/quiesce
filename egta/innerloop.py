@@ -110,15 +110,18 @@ async def inner_loop(  # pylint: disable=too-many-locals
         add_to_list = False
         min_games = []
 
-        for m in all_max_games:
-            temp = m[0]
-            diff = (rest & temp)
-            if np.sum(rest) == np.sum(diff) and np.sum(temp) >= np.sum(rest):
-                break
-            else:
-                if np.sum(diff) != 0:
-                    min_games.append(m)
-                add_to_list = True
+        if len(all_max_games) == 0:
+            add_to_list = True
+        else:
+            for m in all_max_games:
+                temp = m[0]
+                diff = (rest & temp)
+                if np.sum(rest) == np.sum(diff) and np.sum(temp) >= np.sum(rest):
+                    break
+                else:
+                    if np.sum(diff) != 0:
+                        min_games.append(m)
+                    add_to_list = True
 
         print('Game set before new restricted game: {0}'.format(all_max_games))
         print('Restricted game: {0}; added to set: {1}'.format(rest, add_to_list))
