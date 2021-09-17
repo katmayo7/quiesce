@@ -143,7 +143,9 @@ async def inner_loop(  # pylint: disable=too-many-locals
     def check_remove_deviations(rest):
         for dev in all_deviations:
             temp = [d != 0 for d in dev]
+            print('Current deviation: {0}, becomes: {1}'.format(dev, temp))
             diff = (rest & temp)
+            print('Differenced with {0}: {1}'.format(rest, diff))
             if np.sum(temp) != np.sum(diff):
                 all_deviations.add(tuple(dev))
 
