@@ -133,13 +133,13 @@ async def inner_loop(  # pylint: disable=too-many-locals
             n = len(agame._rprofs(rest))
             all_max_games.add(tuple([to_add, n]))
             #check if adding this game removes anything from deviations list
-            check_remove_deviations(all_deviations, rest)
+            check_remove_deviations(rest)
 
     #removes profiles in the deviation set that are represented by the restricted game being added to the game set
-    def check_remove_deviations(deviations, rest):
-        for dev in deviations:
+    def check_remove_deviations(rest):
+        for dev in all_deviations:
             temp = [d != 0 for d in dev]
-            diff = (game & temp)
+            diff = (rest & temp)
             if np.sum(temp) != np.sum(diff):
                 all_deviations.add(tuple(dev))
 
