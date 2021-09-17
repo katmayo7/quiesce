@@ -141,14 +141,20 @@ async def inner_loop(  # pylint: disable=too-many-locals
 
     #removes profiles in the deviation set that are represented by the restricted game being added to the game set
     def check_remove_deviations(rest):
+        to_remove = set()
+
         for dev in all_deviations:
             temp = [d != 0 for d in dev]
             print('Current deviation: {0}, becomes: {1}'.format(dev, temp))
             diff = (rest & temp)
             print('Differenced with {0}: {1}'.format(rest, diff))
             if np.sum(temp) == np.sum(diff):
-                all_deviations.remove(tuple(dev))
-            print('Updated deviation set: {0}'.format(all_deviations))
+                #all_deviations.remove(tuple(dev))
+                to_remove.add(tuple(dev))
+
+        for r in to_remove:
+            all_deviations.remove(r)
+        print('Updated deviation set: {0}'.format(all_deviations))
 
     #adds deviations to the deviation set if they are not already covered by a restricted game in the game set
     def check_add_deviations(deviations):
