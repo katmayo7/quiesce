@@ -99,13 +99,16 @@ async def inner_loop(  # pylint: disable=too-many-locals
     equilibria = collect.mcces(dist_thresh)
     loop = asyncio.get_event_loop()
 
-    #all_profiles = set() #all unique profiles seen
-    all_max_games = set() #all maximal games seen
-    all_deviations = set() #all deviation profiles checked not part of a maximal game
-    eq_num_profiles = {} #{equilibrium: (regret, # profiles)}
+    #all_profiles = set() #all unique profiles seen (for profile counting)
+    all_max_games = set() #all maximal games seen (for profile counting via games)
+    all_deviations = set() #all deviation profiles seen not part of a completed maximal subgame
+    eq_num_profiles = {} #{equilibrium: (regret, # unique profiles encounted so far)}
 
-    #adds new restricted game to set if it is not already in it or represented by a maximal game already in the set
-    #if new game is maximal of games already in the set, it remove those games
+    """
+    helper function for counting the number of profiles encountered
+    --adds game if not represented in the game set
+    --if maximal subgame of games already in the set, removes such games
+    """
     def add_subgame(rest):
         add_to_list = False
         min_games = []
@@ -123,10 +126,6 @@ async def inner_loop(  # pylint: disable=too-many-locals
                         min_games.append(m)
                     add_to_list = True
 
-        #print('New restricted game: {0}, added to set: {1}'.format(rest, add_to_list))
-        #print('Game set before new restricted game: {0}'.format(all_max_games))
-        #print('Deviation set before new restricted game: {0}'.format(all_deviations))
-
         if add_to_list == True:
             for m in min_games:
                 all_max_games.remove(m)
@@ -136,27 +135,27 @@ async def inner_loop(  # pylint: disable=too-many-locals
             #check if adding this game removes anything from deviations list
             check_remove_deviations(rest)
 
-        #print('Game set after new restricted game: {0}'.format(all_max_games))
-        #print('Deviation set after new restricted game processed: {0}'.format(all_deviations))
-
-    #removes profiles in the deviation set that are represented by the restricted game being added to the game set
+    """
+    helper function for counting the number of profiles encountered
+    --removes profiles from the deviation set that are captured by the restricted game rest
+    """
     def check_remove_deviations(rest):
         to_remove = set()
 
         for dev in all_deviations:
             temp = [d != 0 for d in dev]
-            #print('Current deviation: {0}, becomes: {1}'.format(dev, temp))
             diff = (rest & temp)
-            #print('Differenced with {0}: {1}'.format(rest, diff))
             if np.sum(temp) == np.sum(diff):
-                #all_deviations.remove(tuple(dev))
                 to_remove.add(tuple(dev))
 
         for r in to_remove:
             all_deviations.remove(r)
-        #print('Updated deviation set: {0}'.format(all_deviations))
 
-    #adds deviations to the deviation set if they are not already covered by a restricted game in the game set
+    """
+    helper function for counting the number of profiles encountered
+    --adds deviations not covered by a restricted game in the game set to a separate set of deviation profiles
+    --allows for tracking of profiles that are encountered in checking deviations, but whose subgames have not been fully explored yet
+    """
     def check_add_deviations(deviations):
         for dev in deviations:
             covered = False
@@ -167,19 +166,18 @@ async def inner_loop(  # pylint: disable=too-many-locals
                 if np.sum(temp_dev) == np.sum(diff):
                     covered = True 
 
-            #print('New deviation to add: {0}, already in set: {1}'.format(dev, covered))
-            #print('Deviation set before processing: {0}'.format(all_deviations))
-
             if covered == False:
                 all_deviations.add(tuple(dev))
 
-            #print('Deviation set after processing: {0}'.format(all_deviations))
-
+    """
+    helper function for counting the number of profiles encountered
+    --get a count of the number of profiles encountered so far
+    --uses the number of profiles in the completed maximal subgames and the number of deviation profiles
+    """
     def count_profiles():
         num_profiles = 0
         for m in all_max_games:
             num_profiles += m[1]
-
         num_profiles += len(all_deviations)
 
         return num_profiles
@@ -188,39 +186,18 @@ async def inner_loop(  # pylint: disable=too-many-locals
         """Adds a restriction to be evaluated"""
         if not exp_restrictions.add(rest):
             return  # already explored
-
-        #count games
-        #print('Max subgames: {0}'.format(all_max_games))
-        #print('All deviations: {0}'.format(all_deviations))
-        #add_subgame(rest)
-        print('Added subgame: {0}'.format(rest))
-        #print('New max subgames: {0}'.format(all_max_games))
-        #print('New all deviations: {0}'.format(all_deviations))
-
         if agame.is_pure_restriction(rest):
             # Short circuit for pure restriction
-            add_subgame(rest)
-            print('New max subgames: {0}'.format(all_max_games))
-            print('New all deviations: {0}'.format(all_deviations))
+            add_subgame(rest) #count games
             return await add_deviations(rest, rest.astype(float), init_role_dev)
         data = await agame.get_restricted_game(rest)
 
         #count number of profiles (egta schedgame.py)
         #profs = agame._rprofs(rest)
-        #print(profs, file=sys.stderr)
-        #print("line 115", all_profiles, file=sys.stderr)
         #for p in profs:
             #temp_p = tuple(p)
             #all_profiles.add(temp_p)
-        #count games
-        #print('Max subgames: {0}'.format(all_max_games))
-        #print('All deviations: {0}'.format(all_deviations))
-        #add_subgame(rest)
-        #print('New max subgames: {0}'.format(all_max_games))
-        #print('New all deviations: {0}'.format(all_deviations))
-        add_subgame(rest)
-        print('New max subgames: {0}'.format(all_max_games))
-        print('New all deviations: {0}'.format(all_deviations))
+        add_subgame(rest) #count games
 
         reqa = await loop.run_in_executor(
             executor,
@@ -263,11 +240,8 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #for p in profs:
             #temp_p = tuple(p)
             #all_profiles.add(temp_p)
-        #count games
-        #print('All deviations: {0}'.format(all_deviations))
+        #for counting games
         #check_add_deviations(profs)
-        #print('Added deviations: {0}'.format(profs))
-        #print('New all deviations: {0}'.format(all_deviations))
 
         exp = np.add.reduceat(devs * mix, agame.role_starts)
         gains = devs - exp.repeat(agame.num_role_strats)
@@ -352,15 +326,12 @@ async def inner_loop(  # pylint: disable=too-many-locals
             sub[role_start + strat_ind] = True
             heapq.heappush(back, (-gain, id(sub), sub))  # id for tie-breaking
 
-    #print("line 242", all_profiles, file=sys.stderr)
 
     restrictions = (
         agame.pure_restrictions()
         if initial_restrictions is None
         else np.asarray(initial_restrictions, bool)
     )
-
-    #print('initial restrictions: {0}'.format(restrictions))
 
     iteration = 0
     while len(equilibria) < num_equilibria and (
@@ -381,7 +352,6 @@ async def inner_loop(  # pylint: disable=too-many-locals
         elif iteration > 1:
             logging.info("scheduling backup restrictions in game %s", agame)
 
-        #print('Adding restrictions from main code')
         await asyncio.gather(*[add_restriction(r) for r in restrictions])
 
         restrictions = collect.bitset(agame.num_strats, exp_restrictions)
