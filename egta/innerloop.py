@@ -158,13 +158,13 @@ async def inner_loop(  # pylint: disable=too-many-locals
                 if np.sum(temp_dev) == np.sum(diff):
                     covered = True 
 
-            print('New deviation to add: {0}, already in set: {1}'.format(dev, covered))
-            print('Deviation set before processing: {0}'.format(all_deviations))
+            #print('New deviation to add: {0}, already in set: {1}'.format(dev, covered))
+            #print('Deviation set before processing: {0}'.format(all_deviations))
 
             if covered == False:
                 all_deviations.add(tuple(dev))
 
-            print('Deviation set after processing: {0}'.format(all_deviations))
+            #print('Deviation set after processing: {0}'.format(all_deviations))
 
     def count_profiles():
         num_profiles = 0
