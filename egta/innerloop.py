@@ -146,8 +146,9 @@ async def inner_loop(  # pylint: disable=too-many-locals
             print('Current deviation: {0}, becomes: {1}'.format(dev, temp))
             diff = (rest & temp)
             print('Differenced with {0}: {1}'.format(rest, diff))
-            if np.sum(temp) != np.sum(diff):
-                all_deviations.add(tuple(dev))
+            if np.sum(temp) == np.sum(diff):
+                all_deviations.remove(tuple(dev))
+            print('Updated deviation set: {0}'.format(all_deviations))
 
     #adds deviations to the deviation set if they are not already covered by a restricted game in the game set
     def check_add_deviations(deviations):
