@@ -123,9 +123,9 @@ async def inner_loop(  # pylint: disable=too-many-locals
                         min_games.append(m)
                     add_to_list = True
 
-        print('New restricted game: {0}, added to set: {1}'.format(rest, add_to_list))
-        print('Game set before new restricted game: {0}'.format(all_max_games))
-        print('Deviation set before new restricted game: {0}'.format(all_deviations))
+        #print('New restricted game: {0}, added to set: {1}'.format(rest, add_to_list))
+        #print('Game set before new restricted game: {0}'.format(all_max_games))
+        #print('Deviation set before new restricted game: {0}'.format(all_deviations))
 
         if add_to_list == True:
             for m in min_games:
@@ -136,8 +136,8 @@ async def inner_loop(  # pylint: disable=too-many-locals
             #check if adding this game removes anything from deviations list
             check_remove_deviations(rest)
 
-        print('Game set after new restricted game: {0}'.format(all_max_games))
-        print('Deviation set after new restricted game processed: {0}'.format(all_deviations))
+        #print('Game set after new restricted game: {0}'.format(all_max_games))
+        #print('Deviation set after new restricted game processed: {0}'.format(all_deviations))
 
     #removes profiles in the deviation set that are represented by the restricted game being added to the game set
     def check_remove_deviations(rest):
@@ -193,8 +193,9 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #print('Max subgames: {0}'.format(all_max_games))
         #print('All deviations: {0}'.format(all_deviations))
         add_subgame(rest)
-        #print('New max subgames: {0}'.format(all_max_games))
-        #print('New all deviations: {0}'.format(all_deviations))
+        print('Added subgame.')
+        print('New max subgames: {0}'.format(all_max_games))
+        print('New all deviations: {0}'.format(all_deviations))
 
         if agame.is_pure_restriction(rest):
             # Short circuit for pure restriction
@@ -259,7 +260,8 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #count games
         #print('All deviations: {0}'.format(all_deviations))
         check_add_deviations(profs)
-        #print('New all deviations: {0}'.format(all_deviations))
+        print('Added deviation.')
+        print('New all deviations: {0}'.format(all_deviations))
 
         exp = np.add.reduceat(devs * mix, agame.role_starts)
         gains = devs - exp.repeat(agame.num_role_strats)
@@ -352,7 +354,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         else np.asarray(initial_restrictions, bool)
     )
 
-    print('initial restrictions: {0}'.format(restrictions))
+    #print('initial restrictions: {0}'.format(restrictions))
 
     iteration = 0
     while len(equilibria) < num_equilibria and (
@@ -373,7 +375,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         elif iteration > 1:
             logging.info("scheduling backup restrictions in game %s", agame)
 
-        print('Adding restrictions from main code')
+        #print('Adding restrictions from main code')
         await asyncio.gather(*[add_restriction(r) for r in restrictions])
 
         restrictions = collect.bitset(agame.num_strats, exp_restrictions)
