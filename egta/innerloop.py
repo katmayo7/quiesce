@@ -145,16 +145,16 @@ async def inner_loop(  # pylint: disable=too-many-locals
 
         for dev in all_deviations:
             temp = [d != 0 for d in dev]
-            print('Current deviation: {0}, becomes: {1}'.format(dev, temp))
+            #print('Current deviation: {0}, becomes: {1}'.format(dev, temp))
             diff = (rest & temp)
-            print('Differenced with {0}: {1}'.format(rest, diff))
+            #print('Differenced with {0}: {1}'.format(rest, diff))
             if np.sum(temp) == np.sum(diff):
                 #all_deviations.remove(tuple(dev))
                 to_remove.add(tuple(dev))
 
         for r in to_remove:
             all_deviations.remove(r)
-        print('Updated deviation set: {0}'.format(all_deviations))
+        #print('Updated deviation set: {0}'.format(all_deviations))
 
     #adds deviations to the deviation set if they are not already covered by a restricted game in the game set
     def check_add_deviations(deviations):
@@ -188,6 +188,14 @@ async def inner_loop(  # pylint: disable=too-many-locals
         """Adds a restriction to be evaluated"""
         if not exp_restrictions.add(rest):
             return  # already explored
+
+        #count games
+        #print('Max subgames: {0}'.format(all_max_games))
+        #print('All deviations: {0}'.format(all_deviations))
+        add_subgame(rest)
+        #print('New max subgames: {0}'.format(all_max_games))
+        #print('New all deviations: {0}'.format(all_deviations))
+
         if agame.is_pure_restriction(rest):
             # Short circuit for pure restriction
             return await add_deviations(rest, rest.astype(float), init_role_dev)
@@ -203,7 +211,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #count games
         #print('Max subgames: {0}'.format(all_max_games))
         #print('All deviations: {0}'.format(all_deviations))
-        add_subgame(rest)
+        #add_subgame(rest)
         #print('New max subgames: {0}'.format(all_max_games))
         #print('New all deviations: {0}'.format(all_deviations))
 
