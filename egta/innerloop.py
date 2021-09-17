@@ -265,9 +265,9 @@ async def inner_loop(  # pylint: disable=too-many-locals
             #all_profiles.add(temp_p)
         #count games
         #print('All deviations: {0}'.format(all_deviations))
-        check_add_deviations(profs)
-        print('Added deviations: {0}'.format(profs))
-        print('New all deviations: {0}'.format(all_deviations))
+        #check_add_deviations(profs)
+        #print('Added deviations: {0}'.format(profs))
+        #print('New all deviations: {0}'.format(all_deviations))
 
         exp = np.add.reduceat(devs * mix, agame.role_starts)
         gains = devs - exp.repeat(agame.num_role_strats)
