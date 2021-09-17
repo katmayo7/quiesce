@@ -192,13 +192,16 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #count games
         #print('Max subgames: {0}'.format(all_max_games))
         #print('All deviations: {0}'.format(all_deviations))
-        add_subgame(rest)
-        print('Added subgame.')
-        print('New max subgames: {0}'.format(all_max_games))
-        print('New all deviations: {0}'.format(all_deviations))
+        #add_subgame(rest)
+        print('Added subgame: {0}'.format(rest))
+        #print('New max subgames: {0}'.format(all_max_games))
+        #print('New all deviations: {0}'.format(all_deviations))
 
         if agame.is_pure_restriction(rest):
             # Short circuit for pure restriction
+            add_subgame(rest)
+            print('New max subgames: {0}'.format(all_max_games))
+            print('New all deviations: {0}'.format(all_deviations))
             return await add_deviations(rest, rest.astype(float), init_role_dev)
         data = await agame.get_restricted_game(rest)
 
@@ -215,6 +218,9 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #add_subgame(rest)
         #print('New max subgames: {0}'.format(all_max_games))
         #print('New all deviations: {0}'.format(all_deviations))
+        add_subgame(rest)
+        print('New max subgames: {0}'.format(all_max_games))
+        print('New all deviations: {0}'.format(all_deviations))
 
         reqa = await loop.run_in_executor(
             executor,
@@ -260,7 +266,7 @@ async def inner_loop(  # pylint: disable=too-many-locals
         #count games
         #print('All deviations: {0}'.format(all_deviations))
         check_add_deviations(profs)
-        print('Added deviation.')
+        print('Added deviations: {0}'.format(profs))
         print('New all deviations: {0}'.format(all_deviations))
 
         exp = np.add.reduceat(devs * mix, agame.role_starts)
