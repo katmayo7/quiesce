@@ -156,7 +156,7 @@ async def run(args):
         args.output,
     )
     """
-
+    """
     #log equilibrium with number of profiles to json file
     json.dump(
         [
@@ -167,4 +167,5 @@ async def run(args):
         )
 
     args.output.write("\n")
-    print('Output file: {0}'.format(args.output))
+    """
+    #print('Output file: {0}'.format(args.output))
