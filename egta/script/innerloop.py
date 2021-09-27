@@ -167,3 +167,4 @@ async def run(args):
         )
 
     args.output.write("\n")
+    print('Output file: {0}'.format(args.output))
