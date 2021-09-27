@@ -250,19 +250,19 @@ async def inner_loop(  # pylint: disable=too-many-locals
                 # Found equilibrium
                 reg = gains.max()
                 if equilibria.add(mix, reg):
-                    logging.warning(
-                        "found equilibrium %s in game %s with regret %f",
-                        agame.mixture_to_repr(mix),
-                        agame,
-                        reg,
-                    )
+                    #logging.warning(
+                        #"found equilibrium %s in game %s with regret %f",
+                        #agame.mixture_to_repr(mix),
+                        #agame,
+                        #reg,
+                    #)
                     #log # profiles with regret
                     if agame.mixture_to_repr(mix) not in eq_num_profiles:
                         #get number fo profiles
                         #temp_num_profiles = len(all_profiles)
                         temp_num_profiles = count_profiles()
                         eq_num_profiles[agame.mixture_to_repr(mix)] = (reg, temp_num_profiles)
-                        logging.warning('number of profiles: %d', temp_num_profiles)
+                        #logging.warning('number of profiles: %d', temp_num_profiles)
             else:
                 await asyncio.gather(
                     *[
@@ -286,18 +286,18 @@ async def inner_loop(  # pylint: disable=too-many-locals
                     data = await agame.get_deviation_game(mix > 0)
                     reg = regret.mixture_regret(data, mix)
                     if equilibria.add(mix, reg):
-                        logging.warning(
-                            "found equilibrium %s in game %s with regret %f",
-                            agame.mixture_to_repr(mix),
-                            agame,
-                            reg,
-                        )
+                        #logging.warning(
+                            #"found equilibrium %s in game %s with regret %f",
+                            #agame.mixture_to_repr(mix),
+                            #agame,
+                            #reg,
+                        #)
                         #log # profiles with regret
                         if agame.mixture_to_repr(mix) not in eq_num_profiles:
                             #temp_num_profiles = len(all_profiles)
                             temp_num_profiles = count_profiles()
                             eq_num_profiles[agame.mixture_to_repr(mix)] = (reg, temp_num_profiles)
-                            logging.warning('number of profiles: %d', temp_num_profiles)
+                            #logging.warning('number of profiles: %d', temp_num_profiles)
             else:
                 await queue_restrictions(rgains, role_index, rest)
 
