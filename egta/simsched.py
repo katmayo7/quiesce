@@ -86,16 +86,14 @@ class _SimulationScheduler(
             except ConnectionError:  # pragma: no cover race condition
                 raise RuntimeError("process died unexpectedly")
 
-        #*
-        #logging.debug("scheduled profile: %s", self._game.profile_to_repr(profile))
+        logging.debug("scheduled profile: %s", self._game.profile_to_repr(profile))
         await got_data.wait()
         if self._reader.done() and self._reader.exception() is not None:
             raise self._reader.exception()
         jpays = json.loads(line[0].decode("utf8"))
         payoffs = self._game.payoff_from_json(jpays)
         payoffs.setflags(write=False)
-        #*
-        #logging.debug("read payoff for profile: %s", self.profile_to_repr(profile))
+        logging.debug("read payoff for profile: %s", self.profile_to_repr(profile))
         return payoffs
 
     async def _read(self):

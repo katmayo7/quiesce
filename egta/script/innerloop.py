@@ -157,7 +157,6 @@ async def run(args):
 
     f.close()
 
-    """
     json.dump(
         [
             {"equilibrium": sched.mixture_to_json(eqm), "regret": reg}
@@ -165,15 +164,15 @@ async def run(args):
         ],
         args.output,
     )
-    """
+    
     #log equilibrium with number of profiles to json file
-    json.dump(
-        [
-            {"equilibrium": e, "regret": eq[e][0], "num profiles": eq[e][1]}
-            for e in eq
-        ],
-        args.output,
-        )
+    #json.dump(
+        #[
+            #{"equilibrium": e, "regret": eq[e][0], "num profiles": eq[e][1]}
+            #for e in eq
+        #],
+        #args.output,
+        #)
 
     args.output.write("\n")
     #print('Output file: {0}'.format(args.output))

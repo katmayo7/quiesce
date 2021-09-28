@@ -109,10 +109,9 @@ class _EgtaOnlineScheduler(
         """Fetch current scheduling status"""
         try:
             while True:
-                #*
-                #logging.info(
-                    #"query scheduler %d for game %d", self._sched["id"], self._game_id
-                #)
+                logging.info(
+                    "query scheduler %d for game %d", self._sched["id"], self._game_id
+                )
                 info = await self._sched.get_requirements()
                 gu.check(info["active"], "scheduler was deactivated")
                 reqs = info["scheduling_requirements"]
@@ -173,13 +172,12 @@ class _EgtaOnlineScheduler(
                 data = ([num_spays], [num_spays], [0], [pid], pays)
                 self._profiles[hprof] = data
                 self._prof_ids[pid] = data
-            #*
-            #logging.info(
-                #"found %d existing profiles with %d payoffs in game %d",
-                #num_profs,
-                #num_pays,
-                #self._game_id,
-            #)
+            logging.info(
+                "found %d existing profiles with %d payoffs in game %d",
+                num_profs,
+                num_pays,
+                self._game_id,
+            )
 
             # Create and start scheduler
             self._sched = await obs.create_generic_scheduler(
@@ -216,10 +214,9 @@ class _EgtaOnlineScheduler(
 
         if self._sched is not None:
             await self._sched.deactivate()
-            #*
-            #logging.info(
-                #"deactivated scheduler %d for game %d", self._sched["id"], self._game_id
-            #)
+            logging.info(
+                "deactivated scheduler %d for game %d", self._sched["id"], self._game_id
+            )
             self._sched = None
 
         if self._sched_lock.locked():

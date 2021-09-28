@@ -81,8 +81,7 @@ async def trace_all_equilibria(  # pylint: disable=too-many-locals
         eqa = await innerloop.inner_loop(midgame, **innerloop_args)
 
         if not eqa.size:  # pragma: no cover
-            #*
-            #logging.warning("found no equilibria in %s", midgame)
+            logging.warning("found no equilibria in %s", midgame)
             return ()
 
         traces = await asyncio.gather(*[trace_eqm(eqm, mid) for eqm in eqa])
