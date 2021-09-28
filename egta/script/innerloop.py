@@ -147,6 +147,9 @@ async def run(args):
     for e in eq:
         logging.error('equilibria: {0} regret: {1} number of profiles: {2}\n'.format(e, eq[e][0], eq[e][1]))
 
+    for e in eq:
+        print('equilibria: {0} regret: {1} number of profiles: {2}\n'.format(e, eq[e][0], eq[e][1]))
+
     """
     json.dump(
         [
