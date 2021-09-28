@@ -3,6 +3,7 @@ import asyncio
 import json
 import logging
 from concurrent import futures
+import os
 
 from gameanalysis import regret
 
@@ -147,8 +148,14 @@ async def run(args):
     for e in eq:
         logging.error('equilibria: {0} regret: {1} number of profiles: {2}\n'.format(e, eq[e][0], eq[e][1]))
 
+    file = '/home/kamayo/tmp_quiesce.txt'
+    f = open(file, 'w')
+
     for e in eq:
         print('equilibria: {0} regret: {1} number of profiles: {2}\n'.format(e, eq[e][0], eq[e][1]))
+        f.write('equilibria: {0} regret: {1} number of profiles: {2}\n'.format(e, eq[e][0], eq[e][1]))
+
+    f.close()
 
     """
     json.dump(
@@ -158,7 +165,6 @@ async def run(args):
         ],
         args.output,
     )
-    """
     """
     #log equilibrium with number of profiles to json file
     json.dump(
@@ -170,5 +176,4 @@ async def run(args):
         )
 
     args.output.write("\n")
-    """
     #print('Output file: {0}'.format(args.output))
