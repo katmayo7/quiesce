@@ -60,7 +60,8 @@ class _ZipScheduler(
             if next(counter) >= self._count:
                 self._extra_profs.pop(hprof)
             pay = await queue.get()
-            logging.debug("read payoff for profile: %s", self.profile_to_repr(profile))
+            #*
+            #logging.debug("read payoff for profile: %s", self.profile_to_repr(profile))
             return pay
 
         else:
@@ -74,12 +75,13 @@ class _ZipScheduler(
             self._base["assignment"] = self._game.profile_to_assignment(profile)
             with open(os.path.join(direc, "simulation_spec.json"), "w") as fil:
                 json.dump(self._base, fil)
-            logging.debug(
-                "scheduled %d profile%s: %s",
-                self._count,
-                "" if self._count == 1 else "s",
-                self.profile_to_repr(profile),
-            )
+            #*
+            #logging.debug(
+                #"scheduled %d profile%s: %s",
+                #self._count,
+                #"" if self._count == 1 else "s",
+                #self.profile_to_repr(profile),
+            #)
 
             # Limit simultaneous processes
             async with self._procs:
@@ -117,7 +119,8 @@ class _ZipScheduler(
             utils.check(obs_file is None, "simulation wrote too many observation files")
             shutil.rmtree(direc)
             pay = queue.get_nowait()
-            logging.debug("read payoff for profile: %s", self.profile_to_repr(profile))
+            #*
+            #logging.debug("read payoff for profile: %s", self.profile_to_repr(profile))
             return pay
 
     def open(self):
